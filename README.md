@@ -43,7 +43,7 @@ By using this software, you acknowledge that you understand the risks and accept
 
 **Always practice mindful internet habits.** This app runs on your computer and utilizes your file content in order to grab your UUID and use it to encode art. Regardless of your trust in me, or lack thereof, I highly encourage you to review the source code thoroughly to ensure it aligns with your expectations and does not pose any security risks to yourself.
 
-## Legal Stuff:
+## Legal Stuff
 In the U.S., Section 103(f) of the Digital Millennium Copyright Act (DMCA) (17 USC § 1201 (f) - Reverse Engineering) states that it is legal to reverse engineer and circumvent protections to achieve interoperability between computer programs (such as information transfer between applications). https://www.eff.org/issues/coders/reverse-engineering-faq
 
 1. Notwithstanding the provisions of subsection (a)(1)(A), a person who has lawfully obtained the right to use a copy of a computer program may circumvent a technological measure that effectively controls access to a particular portion of that program for the sole purpose of identifying and analyzing those elements of the program that are necessary to achieve **interoperability** of an independently created computer program with other programs, and that have not previously been readily available to the person engaging in the circumvention, to the extent any such acts of identification and analysis do not constitute infringement under this title.
@@ -58,3 +58,15 @@ The Copyright Act of 1976, 17 U.S.C. § 107 states specifically:
 
 Notwithstanding the provisions of sections 106 and 106A, the fair use of a copyrighted work, including such use by reproduction in copies or phonorecords or by any other means specified by that section, for purposes such as **criticism**, **comment**, news reporting, **teaching (including multiple copies for classroom use)**, scholarship, or **research**, is not an infringement of copyright. In determining whether the use made of a work in any particular case is a fair use the factors to be considered shall include—
 
+1. The purpose and character of the use, including whether such use is of a commercial nature or is for nonprofit educational purposes;
+2. The nature of the copyrighted work;
+3. The amount and substantiality of the portion used in relation to the copyrighted work as a whole; and
+4. The effect of the use upon the potential market for or value of the copyrighted work.
+
+**The fact that a work is unpublished shall not itself bar a finding of fair use if such finding is made upon consideration of all the above factors.**
+
+## Credits
+
+> -v31l-sys and cfr0st for reverse engineering Animal Jam and creating Art Studio Edit v1.1 - 1.3
+
+> -EddieTristes for fixing the UUID grabber to work with the AJ Classic app and updating Art Studio Edit to v1.4

@@ -10,7 +10,7 @@
         MaxWidth="1000"
         WindowStartupLocation="CenterScreen"
         Background="{x:Null}"
-        Foreground="DarkSlateGray" Icon="/Brush.png">
+        Foreground="DarkSlateGray" Icon="/Brush.ico">
 
     <Window.Resources>
         <Style x:Key="NavigationButtonStyle" TargetType="Button">
