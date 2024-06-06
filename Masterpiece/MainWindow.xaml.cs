@@ -17,6 +17,7 @@ using System.Text;
 using Ionic.Zlib;
 using System.IO;
 using System;
+using System.Reflection;
 
 
 namespace Masterpiece
@@ -88,7 +89,7 @@ namespace Masterpiece
             }
         }
 
-        private void BrowseButton_Click(object sender, RoutedEventArgs e)
+        private async void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Image Files (*.png;*.jpg;*.jpeg;*.bmp)|*.png;*.jpg;*.jpeg;*.bmp";
@@ -99,8 +100,15 @@ namespace Masterpiece
                 encodeFile = selectedFileName;
                 try
                 {
-                    BitmapImage bitmap = new BitmapImage(new Uri(selectedFileName));
-                    EncodeImage.Source = bitmap;
+                    EncodeImage.Source = null;
+
+                    BitmapSource bitmapSource = await Task.Run(() =>
+                    {
+                        BitmapDecoder decoder = BitmapDecoder.Create(new Uri(selectedFileName), BitmapCreateOptions.None, BitmapCacheOption.Default);
+                        return decoder.Frames[0];
+                    });
+
+                    EncodeImage.Source = bitmapSource;
                 }
                 catch (Exception ex)
                 {
@@ -123,71 +131,78 @@ namespace Masterpiece
             }
         }
 
-        private void DecodeFButton_Click(object sender, RoutedEventArgs e)
+        private async void DecodeFButton_Click(object sender, RoutedEventArgs e)
         {
             if (!File.Exists(decodeFile))
             {
                 MessageBox.Show("Please select an .ajart or .ajgart file before Decoding", "", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
-            else if (uuid.Length != 36)
+
+            if (uuid.Length != 36)
             {
                 MessageBox.Show("Please Log In before attempting to Decode", "", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
-            else
+
+            string file = decodeFile;
+            try
             {
-                string file = decodeFile;
-                byte[] byteData = new byte[0];
-                byteData = SimpleDecrypt(new RijndaelManaged(), CipherMode.CBC, _keybytes_, _ivbytes_, File.ReadAllBytes(file));
-                byte[] buffuncompress = new byte[1024];
+                byte[] byteData = await Task.Run(async () =>
+                {
+                    byte[] fileBytes = await File.ReadAllBytesAsync(file);
+
+                    byte[] decryptedData = SimpleDecrypt(new RijndaelManaged(), CipherMode.CBC, _keybytes_, _ivbytes_, fileBytes);
+
+                    using (MemoryStream decompStream = new MemoryStream(decryptedData))
+                    using (ZlibStream decompressionStream = new ZlibStream(decompStream, Ionic.Zlib.CompressionMode.Decompress))
+                    using (MemoryStream resultStream = new MemoryStream())
+                    {
+                        await decompressionStream.CopyToAsync(resultStream);
+                        return resultStream.ToArray();
+                    }
+                });
+
                 try
                 {
-                    using (Stream decompstream = new MemoryStream(byteData))
-                    {
-                        using (ZlibStream decompressionStream = new ZlibStream(decompstream, Ionic.Zlib.CompressionMode.Decompress))
-                        {
-                            var resultStream = new MemoryStream();
-                            int read;
-
-                            while ((read = decompressionStream.Read(buffuncompress, 0, buffuncompress.Length)) > 0)
-                            {
-                                resultStream.Write(buffuncompress, 0, read);
-                            }
-
-                            byteData = resultStream.ToArray();
-                        }
-                    }
-
-                    try
-                    {
-                        byteData = AMFParser.deserialize(byteData);
-                    }
-                    catch (System.Runtime.InteropServices.SEHException ex)
-                    {
-                        MessageBox.Show($"An SEHException occurred: {ex.Message} Invalid or Corrupted file format", "", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
-                    }
-                    try
-                    {
-                        File.WriteAllBytes(file.Substring(0, file.IndexOf('.')) + ".png", byteData);
-                        string export = (file.Substring(0, file.IndexOf('.')) + ".png");
-                        BitmapImage bitmap = new BitmapImage(new Uri(export));
-                        DecodeImage.Source = bitmap;
-                        MessageBox.Show($"Decoded as {export}!", "Success", MessageBoxButton.OK, MessageBoxImage.None);
-
-                        decodeFile = "";
-                        file = "";
-                        export = "";
-                        Array.Clear(byteData, 0, byteData.Length);
-                    }
-                    catch (IOException ex)
-                    {
-                        MessageBox.Show($"{ex.Message}", "", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
+                    byteData = AMFParser.deserialize(byteData);
                 }
-                catch (Ionic.Zlib.ZlibException)
+                catch (System.Runtime.InteropServices.SEHException ex)
                 {
-                    MessageBox.Show("You do not the right account selected", "Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"An SEHException occurred: {ex.Message} Invalid or Corrupted file format", "", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
                 }
+
+                string export = Path.ChangeExtension(file, ".png");
+                File.WriteAllBytes(export, byteData);
+
+                await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    using (var stream = new MemoryStream(byteData))
+                    {
+                        BitmapImage bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.StreamSource = stream;
+                        bitmap.EndInit();
+                        bitmap.Freeze();
+                        DecodeImage.Source = bitmap;
+                    }
+                }));
+
+                MessageBox.Show($"Decoded as {export}!", "Success", MessageBoxButton.OK, MessageBoxImage.None);
+                decodeFile = "";
+                file = "";
+                export = "";
+                Array.Clear(byteData, 0, byteData.Length);
+            }
+            catch (IOException ex)
+            {
+                MessageBox.Show($"{ex.Message}", "", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Ionic.Zlib.ZlibException)
+            {
+                MessageBox.Show("You do not have the right account selected", "Failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -423,6 +438,25 @@ namespace Masterpiece
             }
 
             return keyOrIv;
+        }
+
+        private void HelpButton_Click(object sender, RoutedEventArgs e)
+        {
+            string exeDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string readmePath = Path.Combine(exeDirectory, "README.txt");
+
+            if (File.Exists(readmePath))
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = readmePath,
+                    UseShellExecute = true
+                });
+            }
+            else
+            {
+                MessageBox.Show("README.txt was deleted", "", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

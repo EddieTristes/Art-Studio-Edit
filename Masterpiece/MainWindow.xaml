@@ -31,7 +31,7 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#4B0082" />
+                    <Setter Property="Background" Value="#4530CC" />
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -112,12 +112,44 @@
                    Margin="0,0,0,30" 
                    HorizontalAlignment="Center"/>
 
+                        <Button Style="{StaticResource NavigationButtonStyle}" Click="HelpButton_Click" Margin="0,-10,0,10" HorizontalAlignment="Center" Background="Transparent">
+                            <TextBlock x:Name="HelpText" Text="Need Help?"
+               FontWeight="Bold"
+               FontSize="20"
+               TextWrapping="Wrap"
+               Foreground="CornflowerBlue"
+               TextDecorations="None"
+               RenderTransformOrigin="0.5,0.5">
+                                <TextBlock.RenderTransform>
+                                    <ScaleTransform x:Name="TextTransform" ScaleX="1" ScaleY="1"/>
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
+                            <Button.Triggers>
+                                <EventTrigger RoutedEvent="MouseEnter">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="TextTransform" Storyboard.TargetProperty="ScaleX" To="1.2" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="TextTransform" Storyboard.TargetProperty="ScaleY" To="1.2" Duration="0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                                <EventTrigger RoutedEvent="MouseLeave">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="TextTransform" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="TextTransform" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </Button.Triggers>
+                        </Button>
+
                         <TextBlock Text="Credits:" 
                    FontWeight="Bold" 
                    FontSize="20" 
                    TextWrapping="Wrap" 
                    Foreground="White" 
-                   Margin="0,290,0,10" 
+                   Margin="0,270,0,10" 
                    HorizontalAlignment="Center"/>
 
                         <TextBlock Text="v31l-sys and cfr0st for reverse engineering Animal Jam and creating Art Studio Edit v1.1 - 1.3" 
@@ -142,8 +174,11 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <Border Grid.Row="0" BorderBrush="#CCCCCC" BorderThickness="1" Width="711" Height="434">
-                            <Image x:Name="EncodeImage" Stretch="Uniform" />
+                        <Border Grid.Row="0" BorderBrush="#000000" BorderThickness="1" Width="712" Height="435">
+                            <Grid>
+                                <Border Background="White"/>
+                                <Image x:Name="EncodeImage" Stretch="None" HorizontalAlignment="Left" VerticalAlignment="Top" />
+                            </Grid>
                         </Border>
 
                         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10">
@@ -160,8 +195,11 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <Border Grid.Row="0" BorderBrush="#CCCCCC" BorderThickness="1" Width="711" Height="434">
-                            <Image x:Name="DecodeImage" Stretch="Uniform" />
+                        <Border Grid.Row="0" BorderBrush="#000000" BorderThickness="1" Width="712" Height="435">
+                            <Grid>
+                                <Border Background="White"/>
+                                <Image x:Name="DecodeImage" Stretch="None" HorizontalAlignment="Left" VerticalAlignment="Top" />
+                            </Grid>
                         </Border>
 
                         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10">
