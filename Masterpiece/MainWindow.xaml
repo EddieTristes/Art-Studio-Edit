@@ -10,7 +10,7 @@
         MaxWidth="1000"
         WindowStartupLocation="CenterScreen"
         Background="{x:Null}"
-        Foreground="DarkSlateGray" Icon="/Brush.ico">
+        Foreground="DarkSlateGray" Icon="/Brush.png">
 
     <Window.Resources>
         <Style x:Key="NavigationButtonStyle" TargetType="Button">
@@ -66,7 +66,7 @@
                     </Button.ContentTemplate>
                 </Button>
                 <Button Content="Decode" Style="{StaticResource NavigationButtonStyle}" Click="DecodeButton_Click">
-                    <Button.ContentTemplate>
+                    <Button.ContentTemplate> 
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="Unlocked" Height="40" Margin="0,0,10,0" />
@@ -117,7 +117,7 @@
                    FontSize="20" 
                    TextWrapping="Wrap" 
                    Foreground="White" 
-                   Margin="0,300,0,10" 
+                   Margin="0,290,0,10" 
                    HorizontalAlignment="Center"/>
 
                         <TextBlock Text="v31l-sys and cfr0st for reverse engineering Animal Jam and creating Art Studio Edit v1.1 - 1.3" 

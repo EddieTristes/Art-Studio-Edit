@@ -5,15 +5,6 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Masterpiece", "Masterpiece\Masterpiece.csproj", "{4C758124-1C8F-4389-BD6E-9EDB08CD1997}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "obj", "obj", "{B8B48F3F-7458-4B3C-A230-5817B915B354}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Debug", "Debug", "{68423492-23F1-491A-8E52-45F52BD784B1}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "net8.0-windows", "net8.0-windows", "{7762E3B3-2BFD-4187-92D2-F91DFC755EBD}"
-	ProjectSection(SolutionItems) = preProject
-		AMF3SpecCLI.dll = AMF3SpecCLI.dll
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,10 +18,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{68423492-23F1-491A-8E52-45F52BD784B1} = {B8B48F3F-7458-4B3C-A230-5817B915B354}
-		{7762E3B3-2BFD-4187-92D2-F91DFC755EBD} = {68423492-23F1-491A-8E52-45F52BD784B1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {66CD695E-1B19-4592-95EE-0D30A068C410}

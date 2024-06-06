@@ -36,7 +36,7 @@ namespace Masterpiece
 
         public MainWindow()
         {
-            InitializeComponent();
+            InitializeComponent(); 
             AMFParser.Initialize();
             LoginText.Text = "Logged Out";
         }
@@ -97,8 +97,16 @@ namespace Masterpiece
             {
                 string selectedFileName = openFileDialog.FileName;
                 encodeFile = selectedFileName;
-                BitmapImage bitmap = new BitmapImage(new Uri(selectedFileName));
-                EncodeImage.Source = bitmap;
+                try
+                {
+                    BitmapImage bitmap = new BitmapImage(new Uri(selectedFileName));
+                    EncodeImage.Source = bitmap;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"An Exception occurred: {ex.Message} Invalid or Corrupted file format", "", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
             }
         }
 
@@ -149,7 +157,15 @@ namespace Masterpiece
                         }
                     }
 
-                    byteData = AMFParser.deserialize(byteData);
+                    try
+                    {
+                        byteData = AMFParser.deserialize(byteData);
+                    }
+                    catch (System.Runtime.InteropServices.SEHException ex)
+                    {
+                        MessageBox.Show($"An SEHException occurred: {ex.Message} Invalid or Corrupted file format", "", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
                     try
                     {
                         File.WriteAllBytes(file.Substring(0, file.IndexOf('.')) + ".png", byteData);
