@@ -392,23 +392,20 @@ namespace Masterpiece
                     }
                     else
                     {
-                        SystemSounds.Exclamation.Play();
                         LoginText.Text = "[ERROR]";
-                        MessageBox.Show($"Failed to fetch user, please log into AJ Classic with 'Remember Me' selected");
+                        MessageBox.Show($"Failed to fetch user, please log into AJ Classic with 'Remember Me' selected", "", MessageBoxButton.OK, MessageBoxImage.Error);
                         return null;
                     }
                 }
                 else
                 {
-                    SystemSounds.Exclamation.Play();
-                    MessageBox.Show($"Failed to find AJ Classic files");
+                    MessageBox.Show($"Failed to find AJ Classic files", "", MessageBoxButton.OK, MessageBoxImage.Error);
                     return null;
                 }
             }
             catch (Exception ex)
             {
-                SystemSounds.Exclamation.Play();
-                MessageBox.Show($"Error: {ex.Message}");
+                MessageBox.Show($"Error: {ex.Message}", "", MessageBoxButton.OK, MessageBoxImage.Error);
                 return null;
             }
         }
