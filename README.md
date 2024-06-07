@@ -1,6 +1,6 @@
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/X8X8Z15EK)
-
 # Art Studio Edit
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/X8X8Z15EK)
 
 Allows you to encode image files as Animal Jam art files, or decode AJ art files into image files.
 
