@@ -12,6 +12,7 @@
 		<FileVersion>1.4</FileVersion>
 		<EnableDefaultPageItems>false</EnableDefaultPageItems>
 		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+		<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -50,6 +51,12 @@
 		<None Update="Brush.ico">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
+		</None>
+		<None Update="Resources\AMF3SpecCLI.dll">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Resources\Ionic.Zlib.dll">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 

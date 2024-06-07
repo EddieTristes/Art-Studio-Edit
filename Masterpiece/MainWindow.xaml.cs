@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Configuration;
 using System.Diagnostics;
 using System.Management;
+using System.Reflection;
 using System.Text.Json;
 using System.Threading;
 using Microsoft.Win32;
@@ -17,8 +18,6 @@ using System.Text;
 using Ionic.Zlib;
 using System.IO;
 using System;
-using System.Reflection;
-
 
 namespace Masterpiece
 {
