@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Title="Art Studio Edit v1.4"
+        Title="Art Studio Edit v1.5"
         Height="600"
         Width="1000"
         ResizeMode="CanMinimize"
@@ -75,7 +75,37 @@
                         </DataTemplate>
                     </Button.ContentTemplate>
                 </Button>
-                <TextBlock x:Name="LoginText" Text="" Margin="0,264,0,0" HorizontalAlignment="Center" Foreground="White" />
+                <Button Style="{StaticResource NavigationButtonStyle}" Click="LoginText_Click" Margin="0,264,0,0" HorizontalAlignment="Center" Background="Transparent">
+                    <TextBlock x:Name="LoginText" Text=""
+               FontWeight="Bold"
+               FontSize="14"
+               TextWrapping="Wrap"
+               Foreground="White"
+               TextDecorations="None"
+               RenderTransformOrigin="0.5,0.5">
+                        <TextBlock.RenderTransform>
+                            <ScaleTransform x:Name="TextTransform" ScaleX="1" ScaleY="1"/>
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
+                    <Button.Triggers>
+                        <EventTrigger RoutedEvent="MouseEnter">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetName="TextTransform" Storyboard.TargetProperty="ScaleX" To="1.2" Duration="0:0:0.2"/>
+                                    <DoubleAnimation Storyboard.TargetName="TextTransform" Storyboard.TargetProperty="ScaleY" To="1.2" Duration="0:0:0.2"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="MouseLeave">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation Storyboard.TargetName="TextTransform" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.2"/>
+                                    <DoubleAnimation Storyboard.TargetName="TextTransform" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.2"/>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Button.Triggers>
+                </Button>
                 <Button Content="Login" Style="{StaticResource NavigationButtonStyle}" Click="LoginButton_Click" Margin="0,10,0,0">
                     <Button.ContentTemplate>
                         <DataTemplate>
@@ -121,23 +151,23 @@
                TextDecorations="None"
                RenderTransformOrigin="0.5,0.5">
                                 <TextBlock.RenderTransform>
-                                    <ScaleTransform x:Name="TextTransform" ScaleX="1" ScaleY="1"/>
+                                    <ScaleTransform x:Name="TextTransform2" ScaleX="1" ScaleY="1"/>
                                 </TextBlock.RenderTransform>
                             </TextBlock>
                             <Button.Triggers>
                                 <EventTrigger RoutedEvent="MouseEnter">
                                     <BeginStoryboard>
                                         <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetName="TextTransform" Storyboard.TargetProperty="ScaleX" To="1.2" Duration="0:0:0.2"/>
-                                            <DoubleAnimation Storyboard.TargetName="TextTransform" Storyboard.TargetProperty="ScaleY" To="1.2" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="TextTransform2" Storyboard.TargetProperty="ScaleX" To="1.2" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="TextTransform2" Storyboard.TargetProperty="ScaleY" To="1.2" Duration="0:0:0.2"/>
                                         </Storyboard>
                                     </BeginStoryboard>
                                 </EventTrigger>
                                 <EventTrigger RoutedEvent="MouseLeave">
                                     <BeginStoryboard>
                                         <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetName="TextTransform" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.2"/>
-                                            <DoubleAnimation Storyboard.TargetName="TextTransform" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="TextTransform2" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="TextTransform2" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.2"/>
                                         </Storyboard>
                                     </BeginStoryboard>
                                 </EventTrigger>
@@ -159,7 +189,7 @@
                    Margin="0,0,0,5" 
                    HorizontalAlignment="Center"/>
 
-                        <TextBlock Text="EddieTristes for fixing UUID grabber to work with the AJ Classic app and updating Art Studio Edit to v1.4" 
+                        <TextBlock Text="EddieTristes for fixing UUID grabber to work with the AJ Classic app and updating Art Studio Edit" 
                    FontSize="16" 
                    TextWrapping="Wrap" 
                    Foreground="LightGray" 

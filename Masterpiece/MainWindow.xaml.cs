@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography.X509Certificates;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Windows.Media.Imaging;
 using System.Security.Cryptography;
@@ -24,21 +25,95 @@ namespace Masterpiece
     public partial class MainWindow : Window
     {
         static string uuid = "";
+        static string username = "";
         static byte[] _keybytes_ = new byte[0];
         static byte[] _ivbytes_ = new byte[0];
         static string encodeFile = "";
         static string decodeFile = "";
+        private const string USER_DATA_FILE = "users.dat";
+        private HashSet<string> knownUsers = new HashSet<string>();
 
         private volatile bool _shouldStop;
 
-        private string JsonFilePath = $@"C:\Users\{Environment.UserName}\AppData\Roaming\AJ Classic\config.json";
+        private string JsonFilePath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "AJ Classic",
+            "config.json"
+        );
+
         static AMF3SpecCLI.AMFParser AMFParser = new AMF3SpecCLI.AMFParser();
 
         public MainWindow()
         {
-            InitializeComponent(); 
+            InitializeComponent();
             AMFParser.Initialize();
             LoginText.Text = "Logged Out";
+            LoadKnownUsers();
+        }
+
+        private void LoadKnownUsers()
+        {
+            string exeDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string userDataPath = Path.Combine(exeDirectory, USER_DATA_FILE);
+
+            if (File.Exists(userDataPath))
+            {
+                try
+                {
+                    knownUsers = new HashSet<string>(File.ReadAllLines(userDataPath));
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error loading user data: {ex.Message}", "", MessageBoxButton.OK, MessageBoxImage.Error);
+                    knownUsers = new HashSet<string>();
+                }
+            }
+        }
+
+        private void SaveKnownUsers()
+        {
+            string filePath = "users.dat";
+            string accountLine = $"{username} > {uuid}";
+
+            if (!knownUsers.Contains(accountLine))
+            {
+                knownUsers.Add(accountLine);
+                File.WriteAllLines(filePath, knownUsers);
+            }
+            if (File.Exists(filePath))
+            {
+                knownUsers = new HashSet<string>(File.ReadAllLines(filePath));
+            }
+            else
+            {
+                knownUsers.Clear();
+            }
+
+            try
+            {
+                if (File.Exists(filePath))
+                {
+                    knownUsers = new HashSet<string>(File.ReadAllLines(filePath));
+                }
+                else
+                {
+                    knownUsers.Clear();
+                }
+
+                if (!knownUsers.Contains(accountLine))
+                {
+                    knownUsers.Add(accountLine);
+                    File.WriteAllLines(filePath, knownUsers);
+                }
+                else
+                {
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error saving account: {ex.Message}");
+            }
         }
 
         private void HomeButton_Click(object sender, RoutedEventArgs e)
@@ -363,9 +438,11 @@ namespace Masterpiece
                     JsonDocument jsonDoc = JsonDocument.Parse(jsonText);
                     JsonElement root = jsonDoc.RootElement;
                     JsonElement loginElement = root.GetProperty("login");
-                    if (loginElement.TryGetProperty("username", out JsonElement usernameElement) && loginElement.TryGetProperty("authToken", out JsonElement authTokenElement))
+
+                    if (loginElement.TryGetProperty("username", out JsonElement usernameElement) &&
+                        loginElement.TryGetProperty("authToken", out JsonElement authTokenElement))
                     {
-                        string username = usernameElement.GetString();
+                        username = usernameElement.GetString();
                         string authToken = authTokenElement.GetString();
 
                         int firstPeriodIndex = authToken.IndexOf('.');
@@ -378,65 +455,44 @@ namespace Masterpiece
                         }
 
                         byte[] decodedBytes = Convert.FromBase64String(middlePart);
-
                         string json = Encoding.UTF8.GetString(decodedBytes);
-
                         JsonDocument jsonDoc2 = JsonDocument.Parse(json);
-
                         JsonElement root2 = jsonDoc2.RootElement;
                         uuid = root2.GetProperty("uuid").GetString();
-                        LoginText.Text = $"{username}";
 
                         if (uuid.Length == 36)
                         {
-                            string _key_ = "";
-                            string _iv_ = "";
+                            LoginText.Text = username;
 
-                            int _counter_ = 0;
-                            while (_key_.Length < 16)
+                            string userEntry = $"{username} > {uuid}";
+
+                            knownUsers.Remove(userEntry);
+
+                            if (!knownUsers.Contains(userEntry))
                             {
-                                _key_ += uuid.ElementAt(_counter_++);
-                                _iv_ += uuid.ElementAt(_counter_++);
+                                knownUsers.Add(userEntry);
+                                SaveKnownUsers();
+
+                                GenerateKeyAndIv();
                             }
 
-                            _keybytes_ = Encoding.Default.GetBytes(_key_);
-                            _ivbytes_ = Encoding.Default.GetBytes(_iv_);
+                            return uuid;
                         }
-                        return uuid;
                     }
-                    else
-                    {
-                        LoginText.Text = "[ERROR]";
-                        MessageBox.Show($"Failed to fetch user, please log into AJ Classic with 'Remember Me' selected", "", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return null;
-                    }
-                }
-                else
-                {
-                    MessageBox.Show($"Failed to find AJ Classic files", "", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                    LoginText.Text = "[ERROR]";
+                    MessageBox.Show("Failed to fetch user, please log into AJ Classic with 'Remember Me' selected",
+                        "", MessageBoxButton.OK, MessageBoxImage.Error);
                     return null;
                 }
+                MessageBox.Show("Failed to find AJ Classic files", "", MessageBoxButton.OK, MessageBoxImage.Error);
+                return null;
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error: {ex.Message}", "", MessageBoxButton.OK, MessageBoxImage.Error);
                 return null;
             }
-        }
-
-        private byte[] GenerateKeyOrIv(string uuid, int size)
-        {
-            var keyOrIv = new byte[size];
-            int uuidLength = uuid.Length;
-            int index = 0;
-
-            for (int i = 0; i < size; i++)
-            {
-                keyOrIv[i] = (byte)uuid[index];
-                index = (index + 1) % uuidLength;
-            }
-
-            return keyOrIv;
         }
 
         private void HelpButton_Click(object sender, RoutedEventArgs e)
@@ -454,8 +510,55 @@ namespace Masterpiece
             }
             else
             {
-                MessageBox.Show("README.txt was deleted", "", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("README.txt was deleted. Please restart the app.", "", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void LoginText_Click(object sender, RoutedEventArgs e)
+        {
+            AccountSelection accountSelectionWindow = new AccountSelection();
+            accountSelectionWindow.Owner = this;
+
+            if (!accountSelectionWindow.AccountsLoaded)
+            {
+                return;
+            }
+
+            if (accountSelectionWindow.ShowDialog() == true)
+            {
+                string selectedAccountLine = accountSelectionWindow.SelectedAccount;
+                if (!string.IsNullOrEmpty(selectedAccountLine))
+                {
+                    var parts = selectedAccountLine.Split('>');
+                    if (parts.Length == 2)
+                    {
+                        username = parts[0].Trim();
+                        uuid = parts[1].Trim();
+                        LoginText.Text = username;
+
+                        GenerateKeyAndIv();
+                    }
+                }
+            }
+        }
+
+        private void GenerateKeyAndIv()
+        {
+            string _key_ = "";
+            string _iv_ = "";
+
+            int _counter_ = 0;
+            while (_key_.Length < 16 && _counter_ < uuid.Length)
+            {
+                _key_ += uuid.ElementAt(_counter_++);
+                if (_counter_ < uuid.Length)
+                {
+                    _iv_ += uuid.ElementAt(_counter_++);
+                }
+            }
+
+            _keybytes_ = Encoding.Default.GetBytes(_key_);
+            _ivbytes_ = Encoding.Default.GetBytes(_iv_);
         }
     }
 }
