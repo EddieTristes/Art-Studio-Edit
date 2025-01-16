@@ -71,4 +71,4 @@ Notwithstanding the provisions of sections 106 and 106A, the fair use of a copyr
 
 > -v31l-sys and cfr0st for reverse engineering Animal Jam and creating Art Studio Edit v1.1 - 1.3
 
-> -EddieTristes for fixing the UUID grabber to work with the AJ Classic app, updating UI, and updating Art Studio Edit to v1.4
+> -EddieTristes for fixing the UUID grabber to work with the AJ Classic app, updating UI, and updating Art Studio Edit
